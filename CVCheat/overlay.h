@@ -14,6 +14,14 @@ public:
     Overlay();
     QPoint top = QPoint(0,0);
     QPoint bot = QPoint(0,0);
+    QPoint ammo = QPoint(0,0);
+
+    QColor colorA;
+    QColor colorB;
+    QColor colorC;
+    QColor colorD;
+
+    unsigned char color_delay = 0;
     void paintEvent(QPaintEvent *e);
 
 };

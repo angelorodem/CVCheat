@@ -12,6 +12,7 @@ MWindow::MWindow(QWidget *parent) :
     over->setFixedSize(screen->availableSize());
     over->show();
     cheat = new CheatCore;
+    setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 MWindow::~MWindow()

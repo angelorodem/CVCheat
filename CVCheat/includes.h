@@ -18,10 +18,12 @@
 #include <QTimer>
 #include <QApplication>
 #include <QDebug>
+#include <QColor>
 
 #include <vector>
 #include <tuple>
 #include <ctime>
+#include <random>
 
 #include "opencv4/opencv2/opencv.hpp"
 #include "opencv4/opencv2/features2d.hpp"
