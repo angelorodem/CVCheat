@@ -4,28 +4,36 @@
 #include "includes.h"
 #include "overlay.h"
 
+extern "C" {
+#include <xdo.h>
+}
+
 class CheatCore :public QObject
 {
     Q_OBJECT
-        QScreen *screen;
+    QScreen *screen;
 private slots:
-        void reload();
+    void check_ammo();
 private:
-        static const unsigned LEFT_MOUSE_BUTTON = 1;
-        static const unsigned RIGHT_MOUSE_BUTTON = 2;
-        static const unsigned MIDDLE_MOUSE_BUTTON = 3;
+    static const unsigned LEFT_MOUSE_BUTTON = 1;
+    static const unsigned RIGHT_MOUSE_BUTTON = 2;
+    static const unsigned MIDDLE_MOUSE_BUTTON = 3;
 
-        Display *display;
-        Window root;
-        XEvent event;
+    Display *display;
+    Window root;
+    Window w;
+    XEvent event;
 
-        QPoint top, bot;
+    QPoint top, bot, ammo;
 
-        size_t displayX;
-        size_t displayY;
-        bool end = false;
+    size_t displayX;
+    size_t displayY;
+    bool end = false;
+    xdo_t * x ;
 
-        Overlay over;
+
+    Overlay over;
+
 public:
     CheatCore();
     void start();
@@ -34,7 +42,8 @@ public:
     void move_mouse(unsigned x, unsigned y);
     void move_mouse(QPoint pos);
 
-    void SendKey(KeySym keysym, KeySym modsym);
+
+    void SendKey();
 };
 
 #endif // CHEATCORE_H

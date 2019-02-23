@@ -28,6 +28,11 @@ void MWindow::keyPressEvent(QKeyEvent *e)
         return;
     }
 
+    if (e->key() == Qt::Key_I) {
+        QPoint temp = over->mapFromGlobal(QCursor::pos());
+        ui->ammo_label->clear();
+        over->ammo = temp;
+    }
 
     if (e->key() == Qt::Key_O) {
         QPoint temp = over->mapFromGlobal(QCursor::pos());
@@ -38,7 +43,9 @@ void MWindow::keyPressEvent(QKeyEvent *e)
         }
         ui->t_label->clear();
         over->top = temp;
-    }else if (e->key() == Qt::Key_P) {
+    }
+
+    if (e->key() == Qt::Key_P) {
         if(over->top.isNull()){
             ui->t_label->setText(ui->t_label->text().toUpper());
             return;

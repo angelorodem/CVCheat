@@ -31,6 +31,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="ammo_label">
+       <property name="text">
+        <string>Set Ammo(I)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="go">
        <property name="enabled">
         <bool>false</bool>

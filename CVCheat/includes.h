@@ -24,6 +24,7 @@
 #include <tuple>
 #include <ctime>
 #include <random>
+#include <unistd.h>
 
 #include "opencv4/opencv2/opencv.hpp"
 #include "opencv4/opencv2/features2d.hpp"
@@ -34,6 +35,8 @@
 #include <X11/extensions/XTest.h>
 #include <X11/Xlib.h>
 #include <X11/Intrinsic.h>
-#include <unistd.h>
+
+
+//#include <unistd.h>
 
 #endif // INCLUDES_H

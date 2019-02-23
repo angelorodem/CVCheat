@@ -34,13 +34,11 @@ LIBS += -L/usr/lib -lGL
 LIBS += -L/usr/lib -ltesseract
 LIBS += -L/usr/lib/X11 -lXtst -lX11
 
-
 LIBS += -L/usr/local/lib -ldlib
 
 LIBS += -L/usr/local/cuda/lib64/ -lcudnn -lcudart -lcublas -lcurand -lcusolver
 
 LIBS += -ldl -lrt
-
 LIBS += -L/usr/lib -lomp
 
 
@@ -67,6 +65,9 @@ LIBS += -L/usr/local/lib \
 -lopencv_photo \
 -lopencv_xphoto \
 -lopencv_highgui
+
+
+LIBS += -lxdo
 
 SOURCES += \
     main.cpp \

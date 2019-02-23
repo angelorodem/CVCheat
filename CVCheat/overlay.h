@@ -21,7 +21,6 @@ public:
     QColor colorC;
     QColor colorD;
 
-    unsigned char color_delay = 0;
     void paintEvent(QPaintEvent *e);
 
 };

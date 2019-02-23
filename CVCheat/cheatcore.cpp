@@ -1,14 +1,5 @@
 #include "cheatcore.h"
 
-void CheatCore::reload()
-{
-    SendKey(XK_space,0);
-    if(end){
-        return;
-    }
-    QTimer::singleShot(50,this,SLOT(reload()));
-}
-
 CheatCore::CheatCore()
 {
     if((display = XOpenDisplay(NULL)) == NULL) {
@@ -25,6 +16,29 @@ CheatCore::CheatCore()
     this->displayY = pscr->height;
 
     //XCloseDisplay( pdsp );
+    x = xdo_new(NULL);
+
+    Window *list;
+    xdo_search_t search;
+    unsigned int nwindows;
+    memset(&search, 0, sizeof(xdo_search_t));
+    search.max_depth = -1;
+    search.require = xdo_search::SEARCH_ANY;
+
+    search.searchmask = SEARCH_CLASS | SEARCH_ONLYVISIBLE;
+    search.winclass = "Chrome";
+
+    int id = xdo_search_windows(x, &search, &list, &nwindows);
+    qDebug() << nwindows;
+    if(!nwindows){
+        qDebug() << "Could not find that fkin window";
+        return;
+    }
+
+    w = list[0];
+
+    xdo_activate_window(x,w);
+    xdo_activate_window(x,w);
 
 }
 
@@ -32,11 +46,13 @@ void CheatCore::setup(Overlay *t_over)
 {
     over.top = t_over->top;
     over.bot = t_over->bot;
+    over.ammo = t_over->ammo;
     over.setFixedSize(screen->availableSize());
     over.show();
 
     top = t_over->mapToGlobal(t_over->top);
     bot = t_over->mapToGlobal(t_over->bot);
+    ammo = t_over->mapToGlobal(t_over->ammo);
 }
 
 void CheatCore::start()
@@ -72,8 +88,8 @@ void CheatCore::start()
 
     std::vector<std::pair<QRect,int>> last_clicks;
     unsigned timr = 0;
-    reload();
-
+    //reload();
+    check_ammo();
     while (true) {
 
         QImage inImage = screen->grabWindow(0,top.rx(),top.ry(),
@@ -112,9 +128,9 @@ void CheatCore::start()
 
             last_clicks.push_back(std::make_pair(QRect(x-3,y-3,x+3,y+3),10));
             //qDebug() << "added one " << x << " " << y;
-            move_mouse(x,y);
-            mouse_click();
-            mouse_click();
+            //move_mouse(x,y);
+            //mouse_click();
+            //mouse_click();
 already_dead:
             if (std::get<1>(last_clicks.back()) < 0) {
                 // qDebug() << "cleared one " << std::get<0>(last_clicks.back());
@@ -188,24 +204,51 @@ void CheatCore::move_mouse(QPoint pos)
     memset(&event, 0, sizeof (event));
 }
 
-void CheatCore::SendKey(KeySym keysym, KeySym modsym){
-    KeyCode keycode = 0, modcode = 0;
-    keycode = XKeysymToKeycode (display, keysym);
-    if (keycode == 0) return;
-    XTestGrabControl (display, True);
-    /* Generate modkey press */
-    if (modsym != 0) {
-        modcode = XKeysymToKeycode(display, modsym);
-        XTestFakeKeyEvent (display, modcode, True, 0);
+void CheatCore::check_ammo()
+{
+
+    QImage inImage = screen->grabWindow(0,ammo.rx()-1,ammo.ry()-1,
+                                        1,1).toImage();
+
+    cv::Mat  mat( inImage.height(), inImage.width(),
+                  CV_8UC4,
+                  const_cast<uchar*>(inImage.bits()),
+                  static_cast<size_t>(inImage.bytesPerLine())
+                  );
+
+
+    unsigned char color = ((uint8_t*)mat.data)[0];
+
+    if(color > 127){//b > 128
+        qDebug() << "Trying to reload, i promisse!";
+        SendKey();
     }
-    /* Generate regular key press and release */
+
+    QTimer::singleShot(1000,this,SLOT(check_ammo()));
+}
+
+void CheatCore::SendKey(){
+
+    xdo_activate_window(x,w);
+    xdo_activate_window(x,w);
+    xdo_send_keysequence_window_down(x, w, "space", 500);
+    //xdo_send_keysequence_window(x, w, "space", 500);
+    //xdo_send_keysequence_window(x, w, "space", 500);
+    // xdo_send_keysequence_window_down(x, w, "space", 500);
+    // xdo_send_keysequence_window_up(x, w, "space", 500);
+    //xdo_send_keysequence_window_up(x, w, "space", 500);
+    /*KeyCode keycode = 0;
+    keycode = XKeysymToKeycode (display, keysym);
+
+    //XTestGrabControl (display, True);
+
+
     XTestFakeKeyEvent (display, keycode, True, 0);
+    usleep(10000000);
     XTestFakeKeyEvent (display, keycode, False, 0);
+    XFlush(display);*/
 
-    /* Generate modkey release */
-    if (modsym != 0)
-        XTestFakeKeyEvent (display, modcode, False, 0);
+    //XSync (display, False);
 
-    XSync (display, False);
-    XTestGrabControl (display, False);
+    //XTestGrabControl (display, False);
 }
